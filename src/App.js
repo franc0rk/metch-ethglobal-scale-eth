@@ -1,23 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { getSigner } from "./services/connectWallet";
+import ChatFunctions from "./components/ChatFunctions";
 
 function App() {
+  const [signer, setSigner] = useState(null);
+
+  const connectWallet = async () => {
+    const _signer = await getSigner();
+    setSigner(_signer);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div>
+      <header className="p-4 bg-purple-600">
+        <div>
+          <button
+            className="bg-white px-4 py-2 rounded-md hover:bg-gray-400"
+            onClick={connectWallet}
+          >
+            Connect Wallet
+          </button>
+        </div>
       </header>
+      {signer && <ChatFunctions signer={signer} />}
     </div>
   );
 }
