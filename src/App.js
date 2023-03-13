@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { getSigner } from "./services/connectWallet";
-import ChatFunctions from "./components/ChatFunctions";
+import AppHeader from "./components/AppHeader";
+import FooterMenu from "./components/FooterMenu";
+import MatcherPage from "./pages/MatcherPage";
 
 function App() {
   const [signer, setSigner] = useState(null);
@@ -11,18 +13,26 @@ function App() {
   };
 
   return (
-    <div>
-      <header className="p-4 bg-purple-600">
-        <div>
-          <button
-            className="bg-white px-4 py-2 rounded-md hover:bg-gray-400"
-            onClick={connectWallet}
-          >
-            Connect Wallet
-          </button>
+    <div className="relative app">
+      <AppHeader />
+      <section className="body px-4 py-2">
+        <div className="p-4">
+          <div className="text-center">
+            <img className="logo" src="/metch-logo.png" alt="Metch Logo" />
+            <p className="text-purple-500 mb-2">
+              Match with other frens and start hacking
+            </p>
+            <button
+              onClick={connectWallet}
+              className="px-4 py-2 border-2 border-purple-500 rounded-lg text-purple-500"
+            >
+              Connect Wallet
+            </button>
+          </div>
         </div>
-      </header>
-      {signer && <ChatFunctions signer={signer} />}
+        {signer && <MatcherPage />}
+      </section>
+      <FooterMenu />
     </div>
   );
 }
