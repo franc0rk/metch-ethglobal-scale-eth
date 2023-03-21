@@ -1,3 +1,3 @@
-export default function HackerExperience() {
-  return <div>Experience...</div>;
+export default function HackerExperience({ experience }) {
+  return <div className="p-2">{experience}</div>;
 }

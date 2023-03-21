@@ -1,6 +1,6 @@
-export default function AppHeader() {
+export default function AppHeader({ profile, user, editProfile }) {
   return (
-    <header className=" bg-purple-500 text-white p-2">
+    <header className="bg-purple-500 text-white p-2">
       <nav>
         <div className="flex items-center justify-around">
           <div>New idea</div>
@@ -14,8 +14,13 @@ export default function AppHeader() {
           <div>
             <div className="w-full">
               <img
-                className="w-12 h-12 rounded-full"
-                src="https://i.seadn.io/gcs/files/02e4178031e907bcfaaa7e030254da3b.png?auto=format&w=1000"
+                onClick={() => editProfile()}
+                className="w-12 h-12 rounded-full cursor-pointer"
+                src={
+                  profile.picture && profile.picture.original
+                    ? profile.picture.original.url
+                    : user.profilePicture
+                }
                 alt="Hacker"
               />
             </div>

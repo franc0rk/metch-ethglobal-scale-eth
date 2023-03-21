@@ -4,17 +4,21 @@ import HackerPoh from "./HackerPoh";
 import HackerHobbies from "./HackerHobbies";
 import { useState } from "react";
 
-export default function HackerCard() {
+export default function HackerCard({ profile }) {
   const [activeTab, setActiveTab] = useState("bio");
+  const statuses = {
+    looking_for_team: "Looking for a team",
+    hacking: "Hacking",
+    inactive: "Inactive",
+  };
 
   return (
     <div className="sm:flex border border-gray-300 rounded">
       <div className="relative sm:w-1/3">
-        <img
-          className="h-full"
-          src="https://i.seadn.io/gcs/files/02e4178031e907bcfaaa7e030254da3b.png?auto=format&w=1000"
-          alt="Hacker"
-        />
+        <img className="w-full h-full" src={profile.imageUrl} alt="Hacker" />
+        <button className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute top-2 left-2 sm:left-2">
+          ⏪
+        </button>
         <button className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute bottom-2 left-16 sm:left-2">
           ⏩
         </button>
@@ -24,11 +28,10 @@ export default function HackerCard() {
       </div>
       <div className="p-2 sm:w-2/3">
         <div>
-          <h3 className="text-lg text-gray-600 mb-2">
-            👨‍💻 francork.eth - Frontend Developer
-          </h3>
+          <h3 className="text-lg text-gray-600 mb-2">🤓 {profile.name}</h3>
           <p className="text-gray-500 mb-2">
-            🔎 Looking for team at Scaling Ethereum 2023
+            🔎 {statuses[profile.status]}{" "}
+            {profile.location && `at ${profile.location}`}
           </p>
           <div className="flex flex-wrap tabs -mx-2">
             <div className="w-full border-b border-b-gray-300">
@@ -69,10 +72,14 @@ export default function HackerCard() {
               </ul>
             </div>
             <div className="w-full">
-              {activeTab === "bio" && <HackerBio />}
-              {activeTab === "experience" && <HackerExperience />}
+              {activeTab === "bio" && <HackerBio profile={profile} />}
+              {activeTab === "experience" && (
+                <HackerExperience experience={profile.experience} />
+              )}
               {activeTab === "poh" && <HackerPoh />}
-              {activeTab === "hobbies" && <HackerHobbies />}
+              {activeTab === "hobbies" && (
+                <HackerHobbies interests={profile.interests} />
+              )}
             </div>
           </div>
         </div>
