@@ -239,3 +239,18 @@ export const getProfiles = async (address) => {
 
   return result.data.profiles.items;
 };
+
+export const getProfilesByHandle = async () => {
+  const addresses = [
+    "0x9E45397D7EB973D44540eE3576842c3addBefF3C",
+    "0x119271753150CB2a42B0Ae3ec6245dC555eEEf26",
+    "0x76583bEA197881CC7b707ED3c4bAb3BAd12a769d",
+    "0xe7eC0f0d9C028930724759CC18Fe1A92C460a0d7",
+    "0x3ed136F11883d438AEad50C0926fa2AE354B6141",
+  ];
+  const profilesByHandle = await lensClient.profile.fetchAll({
+    ownedBy: addresses,
+  });
+
+  return profilesByHandle.items;
+};

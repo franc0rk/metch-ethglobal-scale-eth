@@ -122,7 +122,9 @@ function App() {
               </div>
             </div>
           ))}
-        {user && hasCompletedProfile && !isEditingProfile && <MatcherPage />}
+        {user && hasCompletedProfile && !isEditingProfile && (
+          <MatcherPage signer={signer} />
+        )}
         {signer && isEditingProfile && (
           <EditProfilePage signer={signer} profile={profile} user={user} />
         )}

@@ -6,3 +6,7 @@
   max-height: calc(100vh - 64px);
   overflow-y: scroll;
 }
+
+.mh-card {
+  min-height: calc(100vh - 196px);
+}

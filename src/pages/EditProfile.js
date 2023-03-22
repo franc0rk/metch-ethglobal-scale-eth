@@ -107,7 +107,13 @@ export default function EditProfilePage({ signer, profile, user }) {
     };
 
     setProfileForm(_profileForm);
-  }, []);
+  }, [
+    profile.attributes,
+    profile.bio,
+    profile.name,
+    profile.picture,
+    user.profilePicture,
+  ]);
 
   return (
     <div className="flex flex-wrap">

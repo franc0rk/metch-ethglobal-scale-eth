@@ -4,25 +4,35 @@ import HackerPoh from "./HackerPoh";
 import HackerHobbies from "./HackerHobbies";
 import { useState } from "react";
 
-export default function HackerCard({ profile }) {
+export default function HackerCard({ profile, onLike, onSkip, onBack }) {
   const [activeTab, setActiveTab] = useState("bio");
   const statuses = {
-    looking_for_team: "Looking for a team",
-    hacking: "Hacking",
-    inactive: "Inactive",
+    looking_for_team: "🔎 Looking for a team",
+    hacking: "💻 Hacking",
+    inactive: "⏸️ Inactive",
   };
 
   return (
-    <div className="sm:flex border border-gray-300 rounded">
+    <div className="sm:flex border border-gray-300 rounded mh-card">
       <div className="relative sm:w-1/3">
         <img className="w-full h-full" src={profile.imageUrl} alt="Hacker" />
-        <button className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute top-2 left-2 sm:left-2">
+
+        <button
+          className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute top-2 left-2 sm:left-2"
+          onClick={() => onBack()}
+        >
           ⏪
         </button>
-        <button className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute bottom-2 left-16 sm:left-2">
+        <button
+          className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute bottom-2 left-16 sm:left-2"
+          onClick={() => onSkip()}
+        >
           ⏩
         </button>
-        <button className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute bottom-2 right-16 sm:right-2">
+        <button
+          className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute bottom-2 right-16 sm:right-2"
+          onClick={() => onLike()}
+        >
           🤍
         </button>
       </div>
@@ -30,7 +40,7 @@ export default function HackerCard({ profile }) {
         <div>
           <h3 className="text-lg text-gray-600 mb-2">🤓 {profile.name}</h3>
           <p className="text-gray-500 mb-2">
-            🔎 {statuses[profile.status]}{" "}
+            {statuses[profile.status]}{" "}
             {profile.location && `at ${profile.location}`}
           </p>
           <div className="flex flex-wrap tabs -mx-2">
@@ -67,7 +77,7 @@ export default function HackerCard({ profile }) {
                   }`}
                   onClick={() => setActiveTab("hobbies")}
                 >
-                  <span title="Hobbies">⛰️ Hobbies</span>
+                  <span title="Interests">⛰️ Interests</span>
                 </li>
               </ul>
             </div>
@@ -76,7 +86,7 @@ export default function HackerCard({ profile }) {
               {activeTab === "experience" && (
                 <HackerExperience experience={profile.experience} />
               )}
-              {activeTab === "poh" && <HackerPoh />}
+              {activeTab === "poh" && <HackerPoh profile={profile} />}
               {activeTab === "hobbies" && (
                 <HackerHobbies interests={profile.interests} />
               )}
