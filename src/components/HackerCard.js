@@ -38,7 +38,9 @@ export default function HackerCard({ profile, onLike, onSkip, onBack }) {
       </div>
       <div className="p-2 sm:w-2/3">
         <div>
-          <h3 className="text-lg text-gray-600 mb-2">🤓 {profile.name}</h3>
+          <h3 className="text-lg text-gray-600 mb-2 whitespace-nowrap overflow-hidden overflow-ellipsis">
+            🤓 {profile.name || profile.address}
+          </h3>
           <p className="text-gray-500 mb-2">
             {statuses[profile.status]}{" "}
             {profile.location && `at ${profile.location}`}

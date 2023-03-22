@@ -3,8 +3,9 @@ import { keyBy } from "lodash";
 import { setProfileMetadata, setProfileImage } from "../services/lensQueries";
 import axios from "axios";
 import HackerCard from "../components/HackerCard";
+import { useNavigate } from "react-router-dom";
 
-export default function EditProfilePage({ signer, profile, user }) {
+export default function EditProfilePage({ signer, profile, user, onSave }) {
   async function storeMetadata() {
     const metadata = {
       version: "1.0.0",
@@ -41,7 +42,7 @@ export default function EditProfilePage({ signer, profile, user }) {
     };
 
     const res = await axios(config);
-
+    // window.open(`https://ipfs.io/ipfs/${res.data.IpfsHash}`, "_blank");
     return `ipfs://${res.data.IpfsHash}`;
   }
 
@@ -52,12 +53,17 @@ export default function EditProfilePage({ signer, profile, user }) {
   }
 
   async function save() {
+    setIsSaving(true);
     const metadataUrl = await storeMetadata();
 
-    setProfileMetadata(profile.id, metadataUrl, signer);
+    await setProfileMetadata(profile.id, metadataUrl, signer);
+    onSave();
+    navigate(0, { replace: true });
   }
 
+  const navigate = useNavigate();
   const [isPreviewing, setIsPreviewing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [profileForm, setProfileForm] = useState({
     name: "",
@@ -75,51 +81,55 @@ export default function EditProfilePage({ signer, profile, user }) {
   });
 
   useEffect(() => {
-    const keyedAttributes = keyBy(profile.attributes, "key");
+    if (!profile) {
+      navigate("/", { replace: true });
+    } else {
+      const keyedAttributes = keyBy(profile.attributes, "key");
 
-    const _profileForm = {
-      name: profile.name || "",
-      status: keyedAttributes["status"]
-        ? keyedAttributes["status"].value
-        : "looking_for_team",
-      role: keyedAttributes["role"] ? keyedAttributes["role"].value : "",
-      location: keyedAttributes["location"]
-        ? keyedAttributes["location"].value
-        : "",
-      bio: profile.bio || "",
-      experience: keyedAttributes["experience"]
-        ? keyedAttributes["experience"].value
-        : "",
-      interests: keyedAttributes["interests"]
-        ? keyedAttributes["interests"].value
-        : "",
-      imageUrl:
-        profile.picture && profile.picture.original
-          ? profile.picture.original.url
-          : user.profilePicture,
-      github: keyedAttributes["github"] ? keyedAttributes["github"].value : "",
-      twitter: keyedAttributes["twitter"]
-        ? keyedAttributes["twitter"].value
-        : "",
-      discord: keyedAttributes["discord"]
-        ? keyedAttributes["discord"].value
-        : "",
-    };
+      const _profileForm = {
+        name: profile.name || "",
+        status: keyedAttributes["status"]
+          ? keyedAttributes["status"].value
+          : "looking_for_team",
+        role: keyedAttributes["role"] ? keyedAttributes["role"].value : "",
+        location: keyedAttributes["location"]
+          ? keyedAttributes["location"].value
+          : "",
+        bio: profile.bio || "",
+        experience: keyedAttributes["experience"]
+          ? keyedAttributes["experience"].value
+          : "",
+        interests: keyedAttributes["interests"]
+          ? keyedAttributes["interests"].value
+          : "",
+        imageUrl:
+          profile.picture && profile.picture.original
+            ? profile.picture.original.url
+            : user
+            ? user.profilePicture
+            : "https://gateway.pinata.cloud/ipfs/QmR7CvV4tPQ2bR8e369rCQDy4sEVGHJWjMf4Q1X88yamQU",
+        github: keyedAttributes["github"]
+          ? keyedAttributes["github"].value
+          : "",
+        twitter: keyedAttributes["twitter"]
+          ? keyedAttributes["twitter"].value
+          : "",
+        discord: keyedAttributes["discord"]
+          ? keyedAttributes["discord"].value
+          : "",
+      };
 
-    setProfileForm(_profileForm);
-  }, [
-    profile.attributes,
-    profile.bio,
-    profile.name,
-    profile.picture,
-    user.profilePicture,
-  ]);
+      setProfileForm(_profileForm);
+    }
+  }, []);
 
   return (
     <div className="flex flex-wrap">
       {profile && !isPreviewing && (
         <div className="w-full">
-          <h3 className="text-purple-500 text-lg">Edit Profile</h3>
+          <h3 className="text-purple-500 text-lg">
+            {profile.name ? "Edit" : "Complete"} Profile
+          </h3>
           <div className="mb-2">
             <label className="text-xs text-gray-500">
               Name<span className="text-purple-500">*</span>
@@ -164,9 +174,7 @@ export default function EditProfilePage({ signer, profile, user }) {
             />
           </div>
           <div className="mb-2">
-            <label className="text-xs text-gray-500">
-              Location<span className="text-purple-500">*</span>
-            </label>
+            <label className="text-xs text-gray-500">Location</label>
             <input
               className="w-full border border-gray-300 p-2 rounded-lg"
               placeholder="Location"
@@ -242,9 +250,7 @@ export default function EditProfilePage({ signer, profile, user }) {
             </button> */}
           </div>
           <div className="mb-2">
-            <label className="text-xs text-gray-500">
-              Github<span className="text-purple-500">*</span>
-            </label>
+            <label className="text-xs text-gray-500">Github</label>
             <input
               className="w-full border border-gray-300 p-2 rounded-lg"
               placeholder="Github"
@@ -255,9 +261,7 @@ export default function EditProfilePage({ signer, profile, user }) {
             />
           </div>
           <div className="mb-2">
-            <label className="text-xs text-gray-500">
-              Twitter<span className="text-purple-500">*</span>
-            </label>
+            <label className="text-xs text-gray-500">Twitter</label>
             <input
               className="w-full border border-gray-300 p-2 rounded-lg"
               placeholder="Twitter"
@@ -268,9 +272,7 @@ export default function EditProfilePage({ signer, profile, user }) {
             />
           </div>
           <div className="mb-2">
-            <label className="text-xs text-gray-500">
-              Discord<span className="text-purple-500">*</span>
-            </label>
+            <label className="text-xs text-gray-500">Discord</label>
             <input
               className="w-full border border-gray-300 p-2 rounded-lg"
               placeholder="Discord"
@@ -281,9 +283,11 @@ export default function EditProfilePage({ signer, profile, user }) {
             />
           </div>
           <div className="mt-4 flex justify-end">
-            <button className="border-2 border-gray-500 text-gray-500 p-2 rounded-lg mr-2">
-              Back
-            </button>
+            {profile.name && (
+              <button className="border-2 border-gray-500 text-gray-500 p-2 rounded-lg mr-2">
+                Back
+              </button>
+            )}
             <button
               onClick={() => setIsPreviewing(true)}
               className="border-2 border-purple-500 text-purple-500 p-2 rounded-lg mr-2"
@@ -293,8 +297,9 @@ export default function EditProfilePage({ signer, profile, user }) {
             <button
               onClick={() => save()}
               className="border-2 bg-purple-500 border-purple-500 text-white p-2 rounded-lg"
+              disabled={isSaving}
             >
-              Save
+              {isSaving ? "Saving..." : "Save"}
             </button>
           </div>
         </div>

@@ -1,7 +1,8 @@
 import HackerCard from "../components/HackerCard";
 import FilterControls from "../components/FilterControls";
 import { useEffect, useState } from "react";
-import { getProfilesByHandle } from "../services/lensQueries";
+import { useNavigate } from "react-router-dom";
+import { getMetchProfiles } from "../services/lensQueries";
 import { keyBy } from "lodash";
 
 export default function MatcherPage({ signer }) {
@@ -91,12 +92,16 @@ export default function MatcherPage({ signer }) {
   function back() {
     previousProfile();
   }
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!signer) {
+      navigate("/", { replace: true });
+    }
     fetchProfiles();
 
     async function fetchProfiles() {
-      const _profiles = await getProfilesByHandle();
+      const _profiles = await getMetchProfiles();
       const mappedProfiles = mapProfiles(_profiles);
       setProfiles(mappedProfiles);
     }

@@ -145,111 +145,19 @@ export const createLensProfile = async (signer, handle) => {
   }
 };
 
-export const getProfiles = async (address) => {
-  const query = `query Profiles {
-    profiles(request: { ownedBy: ["${address}"], limit: 10 }) {
-    items {
-        id
-        name
-        bio
-        attributes {
-        displayType
-        traitType
-        key
-        value
-        }
-        followNftAddress
-        metadata
-        isDefault
-        picture {
-        ... on NftImage {
-            contractAddress
-            tokenId
-            uri
-            verified
-        }
-        ... on MediaSet {
-            original {
-            url
-            mimeType
-            }
-        }
-        __typename
-        }
-        handle
-        coverPicture {
-        ... on NftImage {
-            contractAddress
-            tokenId
-            uri
-            verified
-        }
-        ... on MediaSet {
-            original {
-            url
-            mimeType
-            }
-        }
-        __typename
-        }
-        ownedBy
-        dispatcher {
-        address
-        canUseRelay
-        }
-        stats {
-        totalFollowers
-        totalFollowing
-        totalPosts
-        totalComments
-        totalMirrors
-        totalPublications
-        totalCollects
-        }
-        followModule {
-        ... on FeeFollowModuleSettings {
-            type
-            amount {
-            asset {
-                symbol
-                name
-                decimals
-                address
-            }
-            value
-            }
-            recipient
-        }
-        ... on ProfileFollowModuleSettings {
-        type
-        }
-        ... on RevertFollowModuleSettings {
-        type
-        }
-        }
-    }
-    pageInfo {
-        prev
-        next
-        totalCount
-    }
-    }
-    }`;
-  const result = await client.query(query).toPromise();
+export const getProfilesByAddress = async (address) => {
+  const profiles = await lensClient.profile.fetchAll({
+    ownedBy: [address],
+  });
 
-  return result.data.profiles.items;
+  return profiles.items;
 };
 
-export const getProfilesByHandle = async () => {
-  const addresses = [
-    "0x9E45397D7EB973D44540eE3576842c3addBefF3C",
-    "0x119271753150CB2a42B0Ae3ec6245dC555eEEf26",
-    "0x76583bEA197881CC7b707ED3c4bAb3BAd12a769d",
-    "0xe7eC0f0d9C028930724759CC18Fe1A92C460a0d7",
-    "0x3ed136F11883d438AEad50C0926fa2AE354B6141",
-  ];
+export const getMetchProfiles = async () => {
+  const addresses = Array.from({ length: 50 }, (_, i) => `metch${i}.test`);
+
   const profilesByHandle = await lensClient.profile.fetchAll({
-    ownedBy: addresses,
+    handles: addresses,
   });
 
   return profilesByHandle.items;
