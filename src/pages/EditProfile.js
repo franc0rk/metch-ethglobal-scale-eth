@@ -284,7 +284,10 @@ export default function EditProfilePage({ signer, profile, user, onSave }) {
           </div>
           <div className="mt-4 flex justify-end">
             {profile.name && (
-              <button className="border-2 border-gray-500 text-gray-500 p-2 rounded-lg mr-2">
+              <button
+                className="border-2 border-gray-500 text-gray-500 p-2 rounded-lg mr-2"
+                onClick={() => navigate(0, { replace: true })}
+              >
                 Back
               </button>
             )}

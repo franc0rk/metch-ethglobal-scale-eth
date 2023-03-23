@@ -2,12 +2,17 @@ import HackerCard from "../components/HackerCard";
 import FilterControls from "../components/FilterControls";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMetchProfiles } from "../services/lensQueries";
+import { getIdeas, getMetchProfiles } from "../services/lensQueries";
 import { keyBy } from "lodash";
+import IdeaCard from "../components/IdeaCard";
+import { getIdeaAttribute, DEFAULT_IMAGE_URL } from "../utils";
 
-export default function MatcherPage({ signer }) {
+export default function MatcherPage({ signer, address }) {
   const [profiles, setProfiles] = useState([]);
+  const [ideas, setIdeas] = useState([]);
+  const [viewMode, setViewMode] = useState("ideas");
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
+  const [currentIdeaIndex, setCurrentIdeaIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
 
@@ -15,7 +20,8 @@ export default function MatcherPage({ signer }) {
     const filteredProfiles = _profiles.filter(
       (_profile) =>
         _profile.attributes &&
-        _profile.attributes.some((attr) => attr.value === "metch")
+        _profile.attributes.some((attr) => attr.value === "metch") &&
+        _profile.ownedBy !== address
     );
 
     const mappedProfiles = filteredProfiles.map((_profile) => {
@@ -57,15 +63,38 @@ export default function MatcherPage({ signer }) {
     return mappedProfiles;
   }
 
-  function nextProfile() {
-    if (currentProfileIndex === profiles.length - 1) {
-      setCurrentProfileIndex(0);
+  function mapIdeas(_ideas) {
+    const filteredIdeas = _ideas.filter(
+      (_idea) => _idea.profile.ownedBy !== address
+    );
+
+    const mappedIdeas = filteredIdeas.map((_idea) => ({
+      name: _idea.metadata.name,
+      description: _idea.metadata.description,
+      imageUrl: getIdeaAttribute(_idea, "imageUrl", DEFAULT_IMAGE_URL),
+      profile: _idea.profile,
+    }));
+
+    return mappedIdeas;
+  }
+
+  function nextItem() {
+    if (viewMode === "hackers") {
+      if (currentProfileIndex === profiles.length - 1) {
+        setCurrentProfileIndex(0);
+      } else {
+        setCurrentProfileIndex(currentProfileIndex + 1);
+      }
     } else {
-      setCurrentProfileIndex(currentProfileIndex + 1);
+      if (currentIdeaIndex === ideas.length - 1) {
+        setCurrentIdeaIndex(0);
+      } else {
+        setCurrentIdeaIndex(currentIdeaIndex + 1);
+      }
     }
   }
 
-  function previousProfile() {
+  function previousItem() {
     if (currentProfileIndex > 0) {
       setCurrentProfileIndex(currentProfileIndex - 1);
     } else {
@@ -76,7 +105,7 @@ export default function MatcherPage({ signer }) {
   function like() {
     setIsLiked(true);
     setTimeout(() => {
-      nextProfile();
+      nextItem();
       setIsLiked(false);
     }, 1000);
   }
@@ -84,13 +113,13 @@ export default function MatcherPage({ signer }) {
   function skip() {
     setIsSkipped(true);
     setTimeout(() => {
-      nextProfile();
+      nextItem();
       setIsSkipped(false);
     }, 1000);
   }
 
   function back() {
-    previousProfile();
+    previousItem();
   }
   const navigate = useNavigate();
 
@@ -98,7 +127,15 @@ export default function MatcherPage({ signer }) {
     if (!signer) {
       navigate("/", { replace: true });
     }
+
+    fetchIdeas();
     fetchProfiles();
+
+    async function fetchIdeas() {
+      const _ideas = await getIdeas();
+      const mappedIdeas = mapIdeas(_ideas);
+      setIdeas(mappedIdeas);
+    }
 
     async function fetchProfiles() {
       const _profiles = await getMetchProfiles();
@@ -109,12 +146,22 @@ export default function MatcherPage({ signer }) {
 
   return (
     <div className="flex flex-wrap">
-      <FilterControls />
+      <FilterControls
+        viewMode={viewMode}
+        onChange={(e) => setViewMode(e.viewMode)}
+      />
       <div className="w-full relative">
-        {profiles.length > 0 && (
+        {profiles.length > 0 && viewMode === "hackers" && (
           <HackerCard
-            signer={signer}
             profile={profiles[currentProfileIndex]}
+            onLike={like}
+            onSkip={skip}
+            onBack={back}
+          />
+        )}
+        {ideas.length > 0 && viewMode === "ideas" && (
+          <IdeaCard
+            idea={ideas[currentIdeaIndex]}
             onLike={like}
             onSkip={skip}
             onBack={back}

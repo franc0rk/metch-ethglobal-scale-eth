@@ -15,7 +15,11 @@ export default function HackerCard({ profile, onLike, onSkip, onBack }) {
   return (
     <div className="sm:flex border border-gray-300 rounded mh-card">
       <div className="relative sm:w-1/3">
-        <img className="w-full h-full" src={profile.imageUrl} alt="Hacker" />
+        <img
+          className="w-full h-80 sm:h-full"
+          src={profile.imageUrl}
+          alt="Hacker"
+        />
 
         <button
           className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute top-2 left-2 sm:left-2"

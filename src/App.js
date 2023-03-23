@@ -8,6 +8,8 @@ import { getUser } from "./services/pushChat";
 import EditProfilePage from "./pages/EditProfile";
 import { getProfilesByAddress } from "./services/lensQueries";
 import AppWelcome from "./components/AppWelcome";
+import NewIdeaPage from "./pages/NewIdea";
+
 function App() {
   const [signer, setSigner] = useState(null);
   const [address, setAddress] = useState("");
@@ -108,7 +110,21 @@ function App() {
               />
             }
           />
-          <Route path="/home" element={<MatcherPage signer={signer} />} />
+          <Route
+            path="/new-idea"
+            element={
+              <NewIdeaPage
+                signer={signer}
+                profile={profile}
+                user={user}
+                onSave={() => afterFetchSigner(signer)}
+              />
+            }
+          />
+          <Route
+            path="/home"
+            element={<MatcherPage signer={signer} address={address} />}
+          />
         </Routes>
       </section>
       {profile && profile.name && <FooterMenu />}

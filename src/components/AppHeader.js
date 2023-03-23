@@ -9,7 +9,10 @@ export default function AppHeader({ profile, user, editProfile }) {
         <div className="flex items-center justify-around">
           <div>
             {profile.name && (
-              <button className="border-2 border-white py-1 px-2 rounded-lg">
+              <button
+                className="border-2 border-white py-1 px-2 rounded-lg"
+                onClick={() => navigate("/new-idea", { replace: true })}
+              >
                 New idea
               </button>
             )}

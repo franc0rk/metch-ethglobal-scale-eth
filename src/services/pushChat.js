@@ -85,7 +85,7 @@ export const approveChat = async (account, senderAddress) => {
   return response;
 };
 
-export const createGroup = async (_signer) => {
+export const createGroup = async (_signer, groupOptions) => {
   const address = await _signer.getAddress();
   const user = await getUser(address);
 
@@ -95,11 +95,8 @@ export const createGroup = async (_signer) => {
   });
 
   const response = await PushAPI.chat.createGroup({
-    groupName: "Idea 1",
-    groupDescription: "Idea 1 Description",
+    ...groupOptions,
     members: [],
-    groupImage:
-      "https://people.com/thmb/yubadLTVOD2kV9iykZ7G68emU4Y=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(904x0:906x2):format(webp)/pug-1-0d4c0f988e3d421ca4954917b1450664.jpg",
     admins: [],
     isPublic: true,
     account: address,
