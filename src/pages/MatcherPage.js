@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { getIdeas, getMetchProfiles } from "../services/lensQueries";
 import { keyBy } from "lodash";
 import IdeaCard from "../components/IdeaCard";
+import { sendChat } from "../services/pushChat";
 import { getIdeaAttribute, DEFAULT_IMAGE_URL } from "../utils";
 
 export default function MatcherPage({ signer, address }) {
@@ -72,6 +73,7 @@ export default function MatcherPage({ signer, address }) {
       name: _idea.metadata.name,
       description: _idea.metadata.description,
       imageUrl: getIdeaAttribute(_idea, "imageUrl", DEFAULT_IMAGE_URL),
+      chatGroupId: getIdeaAttribute(_idea, "chatGroupId", ""),
       profile: _idea.profile,
     }));
 
@@ -102,8 +104,16 @@ export default function MatcherPage({ signer, address }) {
     }
   }
 
-  function like() {
+  async function like() {
     setIsLiked(true);
+    if (viewMode === "ideas") {
+      const idea = ideas[currentIdeaIndex];
+      const chat = await sendChat(
+        idea.profile.ownedBy,
+        `Hey I want to be part of your idea ${idea.name}. Let's hack together`,
+        signer
+      );
+    }
     setTimeout(() => {
       nextItem();
       setIsLiked(false);

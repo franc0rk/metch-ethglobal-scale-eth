@@ -74,6 +74,32 @@ export const sendChat = async (receiverAddress, message, _signer) => {
   return response;
 };
 
+export const getHistory = async (chatId, _signer) => {
+  const address = await _signer.getAddress();
+  const user = await getUser(address);
+
+  const pgpDecryptedPvtKey = await PushAPI.chat.decryptPGPKey({
+    encryptedPGPPrivateKey: user.encryptedPrivateKey,
+    signer: _signer,
+  });
+  const conversationHash = await PushAPI.chat.conversationHash({
+    account: `eip155:${address}`,
+    conversationId: `${chatId}`,
+    env, // receiver's address or chatId of a group
+  });
+
+  const chatHistory = await PushAPI.chat.history({
+    threadhash: conversationHash.threadHash,
+    account: `eip155:${address}`,
+    toDecrypt: false,
+    limit: 10,
+    pgpPrivateKey: pgpDecryptedPvtKey,
+    env,
+  });
+
+  return chatHistory;
+};
+
 export const approveChat = async (account, senderAddress) => {
   const response = await PushAPI.chat.approve({
     status: "Approved",

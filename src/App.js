@@ -9,12 +9,16 @@ import EditProfilePage from "./pages/EditProfile";
 import { getProfilesByAddress } from "./services/lensQueries";
 import AppWelcome from "./components/AppWelcome";
 import NewIdeaPage from "./pages/NewIdea";
+import ChatsPage from "./pages/ChatsPage";
+import ChatPage from "./pages/ChatPage";
+import { createSocketConnection } from "@pushprotocol/socket";
 
 function App() {
   const [signer, setSigner] = useState(null);
   const [address, setAddress] = useState("");
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [socket, setSocket] = useState(null);
 
   const navigate = useNavigate();
 
@@ -43,12 +47,24 @@ function App() {
       setProfile(_profile);
       if (_profile.name) {
         navigate("/home");
+        initSocket(_address);
       } else {
         navigate("/edit-profile");
       }
     } else {
       navigate("/welcome");
     }
+  }
+
+  async function initSocket(_address) {
+    const pushSDKSocket = createSocketConnection({
+      user: `eip155:${_address}`,
+      env: "staging",
+      socketType: "chat",
+      socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
+    });
+
+    setSocket(pushSDKSocket);
   }
 
   useEffect(() => {
@@ -124,6 +140,18 @@ function App() {
           <Route
             path="/home"
             element={<MatcherPage signer={signer} address={address} />}
+          />
+
+          <Route
+            path="/chats"
+            element={<ChatsPage signer={signer} address={address} />}
+          />
+
+          <Route
+            path="/chat/:id"
+            element={
+              <ChatPage signer={signer} address={address} socket={socket} />
+            }
           />
         </Routes>
       </section>

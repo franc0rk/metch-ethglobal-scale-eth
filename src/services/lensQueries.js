@@ -42,6 +42,7 @@ export const setProfileMetadata = async (profileId, metadata, signer) => {
       });
 
     const typedData = profileTypedData.unwrap().typedData;
+
     const signedTypedData = await signer._signTypedData(
       typedData.domain,
       typedData.types,
@@ -171,7 +172,7 @@ export const getProfilesByAddress = async (address) => {
 };
 
 const searchQuery = {
-  query: "metch",
+  query: "metch,tprofile112",
   limit: 50,
 };
 
