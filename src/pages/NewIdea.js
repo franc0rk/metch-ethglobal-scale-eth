@@ -113,7 +113,7 @@ export default function NewIdeaPage({ signer, profile, onSave }) {
           <div className="mt-4 flex justify-end">
             <button
               className="border-2 border-gray-500 text-gray-500 p-2 rounded-lg mr-2"
-              onClick={() => navigate(0, { replace: true })}
+              onClick={() => navigate("/home")}
             >
               Back
             </button>
