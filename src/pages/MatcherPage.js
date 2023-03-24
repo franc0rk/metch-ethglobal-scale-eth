@@ -7,7 +7,7 @@ import {
   getPublications,
   getMetchProfiles,
 } from "../services/lensQueries";
-import { chain, keyBy } from "lodash";
+import { chain, keyBy, shuffle } from "lodash";
 import IdeaCard from "../components/IdeaCard";
 import { getGroupById, sendChat, updateGroup } from "../services/pushChat";
 import { getPublicationAttribute, DEFAULT_IMAGE_URL } from "../utils";
@@ -203,7 +203,7 @@ export default function MatcherPage({ profile, signer, address }) {
       ]);
       const mappedIdeas = mapIdeas(_ideas);
       const mappedComments = mapComments(_ideas);
-      setIdeas(mappedIdeas);
+      setIdeas(shuffle(mappedIdeas));
       const _myIdeas = _ideas.filter(
         (_idea) =>
           _idea.profile.ownedBy === address && _idea.__typename === "Post"
@@ -217,7 +217,7 @@ export default function MatcherPage({ profile, signer, address }) {
     async function fetchProfiles() {
       const _profiles = await getMetchProfiles();
       const mappedProfiles = mapProfiles(_profiles);
-      setProfiles(mappedProfiles);
+      setProfiles(shuffle(mappedProfiles));
     }
   }, []);
 
