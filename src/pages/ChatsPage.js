@@ -133,7 +133,7 @@ export default function ChatsPage({ signer, address }) {
 
     const mappedChats = mapChats(_chats);
 
-    setChats(mappedChats);
+    setChats(mappedChats.reverse());
   }
 
   function openRequest(request) {

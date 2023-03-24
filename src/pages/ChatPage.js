@@ -232,9 +232,13 @@ export default function ChatPage({ signer, address, socket }) {
                               : member.wallet
                                   .replace("eip155:", "")
                                   .substr(0, 16) + "... "}
-                            <button className="cursor-pointer text-purple-500 underline">
-                              Send POH
-                            </button>
+
+                            {address !==
+                              member.wallet.replace("eip155:", "") && (
+                              <button className="cursor-pointer text-purple-500 underline">
+                                Send POH
+                              </button>
+                            )}
                           </p>
                           <p>
                             {keyedProfiles[member.wallet.replace("eip155:", "")]
