@@ -2,15 +2,21 @@ import HackerCard from "../components/HackerCard";
 import FilterControls from "../components/FilterControls";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getIdeas, getMetchProfiles } from "../services/lensQueries";
-import { keyBy } from "lodash";
+import {
+  commentPublication,
+  getPublications,
+  getMetchProfiles,
+} from "../services/lensQueries";
+import { chain, keyBy, groupBy } from "lodash";
 import IdeaCard from "../components/IdeaCard";
 import { sendChat } from "../services/pushChat";
-import { getIdeaAttribute, DEFAULT_IMAGE_URL } from "../utils";
+import { getPublicationAttribute, DEFAULT_IMAGE_URL } from "../utils";
+import { PublicationTypes } from "@lens-protocol/client";
 
-export default function MatcherPage({ signer, address }) {
+export default function MatcherPage({ profile, signer, address }) {
   const [profiles, setProfiles] = useState([]);
   const [ideas, setIdeas] = useState([]);
+  const [comments, setComments] = useState({});
   const [viewMode, setViewMode] = useState("ideas");
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
   const [currentIdeaIndex, setCurrentIdeaIndex] = useState(0);
@@ -64,17 +70,46 @@ export default function MatcherPage({ signer, address }) {
     return mappedProfiles;
   }
 
+  function mapComments(_comments) {
+    const filteredComments = _comments.filter((_comment) => {
+      return _comment.__typename === "Comment";
+    });
+
+    const mappedComments = filteredComments.map((_comment) => {
+      return {
+        content: _comment.metadata.content,
+        chatId: getPublicationAttribute(_comment, "chatId", ""),
+        address: _comment.profile.ownedBy,
+        to: _comment.mainPost.profile.ownedBy,
+      };
+    });
+
+    const data = chain(mappedComments)
+      .uniqBy((x) => x.address && x.chatId)
+      .groupBy((x) => `${x.address}-${x.to}`)
+      .value();
+
+    return data;
+  }
+
   function mapIdeas(_ideas) {
     const filteredIdeas = _ideas.filter(
-      (_idea) => _idea.profile.ownedBy !== address
+      (_idea) =>
+        _idea.profile.ownedBy !== address &&
+        _idea.metadata &&
+        _idea.metadata.attributes.some(
+          (_attr) => _attr.traitType === "chatGroupId"
+        )
     );
 
     const mappedIdeas = filteredIdeas.map((_idea) => ({
+      id: _idea.id,
       name: _idea.metadata.name,
       description: _idea.metadata.description,
-      imageUrl: getIdeaAttribute(_idea, "imageUrl", DEFAULT_IMAGE_URL),
-      chatGroupId: getIdeaAttribute(_idea, "chatGroupId", ""),
+      imageUrl: getPublicationAttribute(_idea, "imageUrl", DEFAULT_IMAGE_URL),
+      chatGroupId: getPublicationAttribute(_idea, "chatGroupId", ""),
       profile: _idea.profile,
+      idea: _idea,
     }));
 
     return mappedIdeas;
@@ -108,16 +143,18 @@ export default function MatcherPage({ signer, address }) {
     setIsLiked(true);
     if (viewMode === "ideas") {
       const idea = ideas[currentIdeaIndex];
-      const chat = await sendChat(
-        idea.profile.ownedBy,
-        `Hey! I want to be part of your idea ${idea.name}. Let's hack!`,
+      const commentMessage = `Hey! I want to be part of your idea ${idea.name}. Let's hack!`;
+      const comment = await commentPublication(
+        idea.id,
+        profile.id,
+        idea.chatGroupId,
+        commentMessage,
         signer
       );
+      const chat = await sendChat(idea.profile.ownedBy, commentMessage, signer);
     }
-    setTimeout(() => {
-      nextItem();
-      setIsLiked(false);
-    }, 1000);
+    nextItem();
+    setIsLiked(false);
   }
 
   function skip() {
@@ -142,9 +179,14 @@ export default function MatcherPage({ signer, address }) {
     fetchProfiles();
 
     async function fetchIdeas() {
-      const _ideas = await getIdeas();
+      const _ideas = await getPublications([
+        PublicationTypes.Post,
+        PublicationTypes.Comment,
+      ]);
       const mappedIdeas = mapIdeas(_ideas);
+      const mappedComments = mapComments(_ideas);
       setIdeas(mappedIdeas);
+      setComments(mappedComments);
     }
 
     async function fetchProfiles() {

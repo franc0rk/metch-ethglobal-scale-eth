@@ -154,7 +154,13 @@ function App() {
           />
           <Route
             path="/home"
-            element={<MatcherPage signer={signer} address={address} />}
+            element={
+              <MatcherPage
+                signer={signer}
+                address={address}
+                profile={profile}
+              />
+            }
           />
 
           <Route

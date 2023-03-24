@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 import { getChats } from "../services/pushChat";
-import { keyBy } from "lodash";
-import { getMetchProfiles } from "../services/lensQueries";
+import { keyBy, chain } from "lodash";
+import { getMetchProfiles, getPublications } from "../services/lensQueries";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { PublicationTypes } from "@lens-protocol/client";
+import { getPublicationAttribute } from "../utils";
 
 export default function ChatsPage({ signer, address }) {
   const [requests, setRequests] = useState([]);
   const [chats, setChats] = useState([]);
   const navigate = useNavigate();
+  const [comments, setComments] = useState({});
 
   function mapRequests(_requests, _keyedProfiles) {
     const mappedRequests = _requests.map((_request) => {
@@ -88,6 +91,34 @@ export default function ChatsPage({ signer, address }) {
     return mappedProfiles;
   }
 
+  function mapComments(_comments) {
+    const filteredComments = _comments.filter((_comment) => {
+      return _comment.__typename === "Comment";
+    });
+
+    const mappedComments = filteredComments.map((_comment) => {
+      return {
+        content: _comment.metadata.content,
+        chatId: getPublicationAttribute(_comment, "chatId", ""),
+        address: _comment.profile.ownedBy,
+        to: _comment.mainPost.profile.ownedBy,
+      };
+    });
+
+    const data = chain(mappedComments)
+      .uniqBy((x) => x.address && x.chatId)
+      .groupBy((x) => `${x.address}-${x.to}`)
+      .value();
+
+    return data;
+  }
+
+  async function fetchComments() {
+    const _comments = await getPublications([PublicationTypes.Comment]);
+    const mappedComments = mapComments(_comments);
+    setComments(mappedComments);
+  }
+
   async function fetchRequests() {
     const _requests = await getChats(signer, "requests", true);
     const _profiles = await getMetchProfiles();
@@ -105,7 +136,33 @@ export default function ChatsPage({ signer, address }) {
     setChats(mappedChats);
   }
 
+  function openRequest(request) {
+    if (request.idea) {
+      navigate(`/request/${request.idea.chatId}`, {
+        state: {
+          idea: request.idea,
+          messages: [],
+        },
+      });
+    }
+    if (request.profile) {
+      const messages = comments[`${request.profile.address}-${address}`];
+
+      if (messages && messages.length > 0) {
+        navigate(`/request/${request.profile.address}`, {
+          state: {
+            profile: request.profile,
+            messages,
+          },
+        });
+      } else {
+        console.log("no requests");
+      }
+    }
+  }
+
   useEffect(() => {
+    fetchComments();
     fetchRequests();
     fetchChats();
   }, []);
@@ -115,28 +172,14 @@ export default function ChatsPage({ signer, address }) {
       <div className="w-full">
         <div>
           <h4 className="text-purple-500 mb-2">Requests</h4>
+          {requests.length === 0 && (
+            <div className="text-gray-500">No requests</div>
+          )}
           <div className="flex flex-wrap">
             {requests.map((request, requestIndex) => (
               <div
                 className="flex justify-center items-center mb-2 cursor-pointer mr-2"
-                onClick={() =>
-                  navigate(
-                    `/request/${
-                      request.idea
-                        ? request.idea.chatId
-                        : request.profile.address
-                    }`,
-                    {
-                      state: {
-                        idea: request.idea,
-                        profile: request.profile,
-                        // message: request.msg.messageContent,
-                        message:
-                          "Hey I want to be part of your idea Nft Marketplace. Let's hack together",
-                      },
-                    }
-                  )
-                }
+                onClick={() => openRequest(request)}
                 key={`request-${requestIndex}`}
               >
                 <img
@@ -154,6 +197,7 @@ export default function ChatsPage({ signer, address }) {
         </div>
         <div className="my-4">
           <h4 className="text-purple-500 mb-2">Chats</h4>
+          {chats.length === 0 && <div className="text-gray-500">No chats</div>}
           <div>
             {chats.map((chat, chatIndex) => (
               <div
