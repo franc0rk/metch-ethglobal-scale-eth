@@ -1,4 +1,4 @@
-import LensClient, { mumbai, PublicationTypes } from "@lens-protocol/client";
+import LensClient, { mumbai } from "@lens-protocol/client";
 import axios from "axios";
 import { v4 } from "uuid";
 

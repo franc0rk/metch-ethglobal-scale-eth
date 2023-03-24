@@ -50,8 +50,10 @@ export default function FilterControls({
                 className="text-xs text-gray-500 px-1 border border-gray-300 rounded-lg"
                 onChange={(e) => onChangeIdea(e.target.value)}
               >
-                {ideas.map((idea) => (
-                  <option value={idea.id}>{idea.metadata.name}</option>
+                {ideas.map((idea, ideaIndex) => (
+                  <option key={`myidea-${ideaIndex}`} value={idea.id}>
+                    {idea.metadata.name}
+                  </option>
                 ))}
               </select>
             ) : (
