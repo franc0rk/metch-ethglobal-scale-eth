@@ -8,6 +8,7 @@ export default function HackerCard({
   profile,
   message,
   isShowingBack,
+  disabled,
   onLike,
   onSkip,
   onBack,
@@ -35,6 +36,7 @@ export default function HackerCard({
         {isShowingBack && (
           <button
             className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute top-2 left-2 sm:left-2"
+            disabled={disabled}
             onClick={() => onBack()}
           >
             ⏪
@@ -42,12 +44,14 @@ export default function HackerCard({
         )}
         <button
           className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute bottom-2 left-16 sm:left-2"
+          disabled={disabled}
           onClick={() => onSkip()}
         >
           ⏩
         </button>
         <button
           className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute bottom-2 right-16 sm:right-2"
+          disabled={disabled}
           onClick={() => onLike()}
         >
           🤍

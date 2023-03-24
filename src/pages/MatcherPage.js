@@ -7,9 +7,9 @@ import {
   getPublications,
   getMetchProfiles,
 } from "../services/lensQueries";
-import { chain, keyBy, groupBy } from "lodash";
+import { chain, keyBy } from "lodash";
 import IdeaCard from "../components/IdeaCard";
-import { sendChat } from "../services/pushChat";
+import { getGroupById, sendChat, updateGroup } from "../services/pushChat";
 import { getPublicationAttribute, DEFAULT_IMAGE_URL } from "../utils";
 import { PublicationTypes } from "@lens-protocol/client";
 
@@ -17,6 +17,9 @@ export default function MatcherPage({ profile, signer, address }) {
   const [profiles, setProfiles] = useState([]);
   const [ideas, setIdeas] = useState([]);
   const [comments, setComments] = useState({});
+  const [myIdeas, setMyIdeas] = useState([]);
+  const [myMappedIdeas, setMyMappedIdeas] = useState({});
+  const [currentIdea, setCurrentIdea] = useState(null);
   const [viewMode, setViewMode] = useState("ideas");
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
   const [currentIdeaIndex, setCurrentIdeaIndex] = useState(0);
@@ -152,6 +155,21 @@ export default function MatcherPage({ profile, signer, address }) {
         signer
       );
       const chat = await sendChat(idea.profile.ownedBy, commentMessage, signer);
+    } else {
+      const groupChatId = getPublicationAttribute(
+        currentIdea,
+        "chatGroupId",
+        ""
+      );
+      const currentProfile = profiles[currentProfileIndex];
+      const group = await getGroupById(groupChatId);
+      await updateGroup(signer, {
+        ...group,
+        members: [
+          ...group.members.map((member) => member.wallet),
+          currentProfile.address,
+        ],
+      });
     }
     nextItem();
     setIsLiked(false);
@@ -186,6 +204,13 @@ export default function MatcherPage({ profile, signer, address }) {
       const mappedIdeas = mapIdeas(_ideas);
       const mappedComments = mapComments(_ideas);
       setIdeas(mappedIdeas);
+      const _myIdeas = _ideas.filter(
+        (_idea) =>
+          _idea.profile.ownedBy === address && _idea.__typename === "Post"
+      );
+      setMyIdeas(_myIdeas);
+      setMyMappedIdeas(keyBy(_myIdeas, "id"));
+      setCurrentIdea(_myIdeas[0]);
       setComments(mappedComments);
     }
 
@@ -200,13 +225,17 @@ export default function MatcherPage({ profile, signer, address }) {
     <div className="flex flex-wrap">
       <FilterControls
         viewMode={viewMode}
+        ideas={myIdeas}
+        currentIdea={currentIdea}
         onChange={(e) => setViewMode(e.viewMode)}
+        onChangeIdea={(id) => setCurrentIdea(myMappedIdeas[id])}
       />
       <div className="w-full relative">
         {profiles.length > 0 && viewMode === "hackers" && (
           <HackerCard
             profile={profiles[currentProfileIndex]}
             isShowingBack={currentProfileIndex !== 0}
+            disabled={myIdeas.length === 0}
             onLike={like}
             onSkip={skip}
             onBack={back}

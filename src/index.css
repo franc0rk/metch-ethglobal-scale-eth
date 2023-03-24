@@ -14,3 +14,12 @@
 .mh-chat-card {
   min-height: calc(100vh - 144px);
 }
+
+button:disabled {
+  background-color: gray;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+}
