@@ -204,8 +204,11 @@ export default function ChatPage({ signer, address, socket }) {
                 </div>
                 <div className="text-gray-500 text-sm">
                   <div>
-                    {chatInfo.members.map((member) => (
-                      <div className="flex items-center my-2">
+                    {chatInfo.members.map((member, memberIndex) => (
+                      <div
+                        className="flex items-center my-2"
+                        key={`member-${memberIndex}`}
+                      >
                         <div>
                           <img
                             className="w-16 h-16 rounded-full border-2 border-gray-300"

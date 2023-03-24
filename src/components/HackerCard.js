@@ -4,7 +4,14 @@ import HackerPoh from "./HackerPoh";
 import HackerHobbies from "./HackerHobbies";
 import { useState } from "react";
 
-export default function HackerCard({ profile, onLike, onSkip, onBack }) {
+export default function HackerCard({
+  profile,
+  message,
+  isShowingBack,
+  onLike,
+  onSkip,
+  onBack,
+}) {
   const [activeTab, setActiveTab] = useState("bio");
   const statuses = {
     looking_for_team: "🔎 Looking for a team",
@@ -20,13 +27,19 @@ export default function HackerCard({ profile, onLike, onSkip, onBack }) {
           src={profile.imageUrl}
           alt="Hacker"
         />
-
-        <button
-          className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute top-2 left-2 sm:left-2"
-          onClick={() => onBack()}
-        >
-          ⏪
-        </button>
+        {message && (
+          <div className="text-gray-600 absolute top-4 left-0 right-0 w-80 mx-auto opacity-80 p-4 rounded-lg bg-white border-2 border-gray-300">
+            <p className="break-words">💻 {message}</p>
+          </div>
+        )}
+        {isShowingBack && (
+          <button
+            className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute top-2 left-2 sm:left-2"
+            onClick={() => onBack()}
+          >
+            ⏪
+          </button>
+        )}
         <button
           className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute bottom-2 left-16 sm:left-2"
           onClick={() => onSkip()}

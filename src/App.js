@@ -4,14 +4,15 @@ import { getConnectedAccount, getSigner } from "./services/connectWallet";
 import AppHeader from "./components/AppHeader";
 import FooterMenu from "./components/FooterMenu";
 import MatcherPage from "./pages/MatcherPage";
-import { getUser } from "./services/pushChat";
+import { getHistory, getUser } from "./services/pushChat";
 import EditProfilePage from "./pages/EditProfile";
 import { getProfilesByAddress } from "./services/lensQueries";
 import AppWelcome from "./components/AppWelcome";
 import NewIdeaPage from "./pages/NewIdea";
 import ChatsPage from "./pages/ChatsPage";
 import ChatPage from "./pages/ChatPage";
-import { createSocketConnection } from "@pushprotocol/socket";
+import { createSocketConnection, EVENTS } from "@pushprotocol/socket";
+import RequestPage from "./pages/RequestPage";
 
 function App() {
   const [signer, setSigner] = useState(null);
@@ -47,7 +48,7 @@ function App() {
       setProfile(_profile);
       if (_profile.name) {
         navigate("/home");
-        initSocket(_address);
+        initSocket(_address, _signer);
       } else {
         navigate("/edit-profile");
       }
@@ -56,12 +57,26 @@ function App() {
     }
   }
 
-  async function initSocket(_address) {
+  function initSocket(_address, _signer) {
     const pushSDKSocket = createSocketConnection({
       user: `eip155:${_address}`,
       env: "staging",
       socketType: "chat",
       socketOptions: { autoConnect: true, reconnectionAttempts: 3 },
+    });
+
+    pushSDKSocket?.on(EVENTS.CONNECT, () => {
+      console.log("connected");
+    });
+    pushSDKSocket?.on(EVENTS.DISCONNECT, (err) => console.log(err));
+    pushSDKSocket?.on(EVENTS.USER_FEEDS, (notification) =>
+      console.log("userfeeds", notification)
+    );
+    pushSDKSocket?.on(EVENTS.USER_SPAM_FEEDS, (spam) =>
+      console.log("spam", spam)
+    );
+    pushSDKSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, (notification) => {
+      console.log(notification);
     });
 
     setSocket(pushSDKSocket);
@@ -152,6 +167,11 @@ function App() {
             element={
               <ChatPage signer={signer} address={address} socket={socket} />
             }
+          />
+
+          <Route
+            path="/request/:id"
+            element={<RequestPage signer={signer} address={address} />}
           />
         </Routes>
       </section>

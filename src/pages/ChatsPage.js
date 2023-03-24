@@ -12,10 +12,24 @@ export default function ChatsPage({ signer, address }) {
 
   function mapRequests(_requests, _keyedProfiles) {
     const mappedRequests = _requests.map((_request) => {
-      return {
-        ..._request,
-        profile: _keyedProfiles[_request.did.replace("eip155:", "")],
-      };
+      if (_request.groupInformation) {
+        return {
+          ..._request,
+          idea: {
+            name: _request.groupInformation.groupName,
+            description: _request.groupInformation.groupDescription,
+            imageUrl: _request.groupInformation.groupImage,
+            chatId: _request.groupInformation.chatId,
+            profile:
+              _keyedProfiles[_request.intentSentBy.replace("eip155:", "")],
+          },
+        };
+      } else {
+        return {
+          ..._request,
+          profile: _keyedProfiles[_request.did.replace("eip155:", "")],
+        };
+      }
     });
     return mappedRequests;
   }
@@ -75,8 +89,7 @@ export default function ChatsPage({ signer, address }) {
   }
 
   async function fetchRequests() {
-    const _requests = await getChats(signer, "requests");
-
+    const _requests = await getChats(signer, "requests", true);
     const _profiles = await getMetchProfiles();
     const mappedProfiles = mapProfiles(_profiles);
     const keyedProfiles = keyBy(mappedProfiles, "address");
@@ -85,7 +98,7 @@ export default function ChatsPage({ signer, address }) {
   }
 
   async function fetchChats() {
-    const _chats = await getChats(signer, "chats");
+    const _chats = await getChats(signer, "chats", false);
 
     const mappedChats = mapChats(_chats);
 
@@ -93,7 +106,7 @@ export default function ChatsPage({ signer, address }) {
   }
 
   useEffect(() => {
-    // fetchRequests();
+    fetchRequests();
     fetchChats();
   }, []);
 
@@ -106,12 +119,34 @@ export default function ChatsPage({ signer, address }) {
             {requests.map((request, requestIndex) => (
               <div
                 className="flex justify-center items-center mb-2 cursor-pointer mr-2"
+                onClick={() =>
+                  navigate(
+                    `/request/${
+                      request.idea
+                        ? request.idea.chatId
+                        : request.profile.address
+                    }`,
+                    {
+                      state: {
+                        idea: request.idea,
+                        profile: request.profile,
+                        // message: request.msg.messageContent,
+                        message:
+                          "Hey I want to be part of your idea Nft Marketplace. Let's hack together",
+                      },
+                    }
+                  )
+                }
                 key={`request-${requestIndex}`}
               >
                 <img
                   className="border-2 border-gray-300  w-16 h-16 rounded-full"
-                  src={request.profile?.imageUrl}
-                  alt={request.profile?.name}
+                  src={
+                    request.idea
+                      ? request.idea.imageUrl
+                      : request.profile.imageUrl
+                  }
+                  alt={request.idea ? request.idea.name : request.profile.name}
                 />
               </div>
             ))}
@@ -137,7 +172,7 @@ export default function ChatsPage({ signer, address }) {
                     alt="group"
                   />
                 </div>
-                <div className="ml-4">
+                <div className="flex-1 ml-4">
                   <h6 className="font-semibold mb-1 text-gray-500">
                     {chat.groupInformation.groupName}
                   </h6>
@@ -145,8 +180,12 @@ export default function ChatsPage({ signer, address }) {
                     {chat.msg.messageContent || "No messages yet."}
                   </p>
                   <small className="text-gray-400">
-                    {moment(chat.msg.timestamp).format("YYYY-MM-DD HH:mm")}
+                    {chat.msg.timestamp &&
+                      moment(chat.msg.timestamp).format("YYYY-MM-DD HH:mm")}
                   </small>
+                </div>
+                <div className="self-center p-2 text-xl">
+                  <button>⠇</button>
                 </div>
               </div>
             ))}

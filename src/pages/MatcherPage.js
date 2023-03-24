@@ -110,7 +110,7 @@ export default function MatcherPage({ signer, address }) {
       const idea = ideas[currentIdeaIndex];
       const chat = await sendChat(
         idea.profile.ownedBy,
-        `Hey I want to be part of your idea ${idea.name}. Let's hack together`,
+        `Hey! I want to be part of your idea ${idea.name}. Let's hack!`,
         signer
       );
     }
@@ -164,6 +164,7 @@ export default function MatcherPage({ signer, address }) {
         {profiles.length > 0 && viewMode === "hackers" && (
           <HackerCard
             profile={profiles[currentProfileIndex]}
+            isShowingBack={currentProfileIndex !== 0}
             onLike={like}
             onSkip={skip}
             onBack={back}

@@ -32,7 +32,7 @@ export const getPgpDecrptedKey = async (_signer) => {
   return pgpDecryptedPvtKey;
 };
 
-export const getChats = async (_signer, type) => {
+export const getChats = async (_signer, type, decrypt) => {
   const address = await _signer.getAddress();
   const user = await getUser(address);
 
@@ -147,6 +147,15 @@ export const updateGroup = async (_signer, groupOptions) => {
     admins: [address],
     account: address,
     pgpPrivateKey: pgpDecryptedPvtKey,
+    env,
+  });
+
+  return response;
+};
+
+export const getGroupById = async (chatId) => {
+  const response = await PushAPI.chat.getGroup({
+    chatId,
     env,
   });
 

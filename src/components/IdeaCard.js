@@ -1,19 +1,28 @@
-export default function IdeaCard({ idea, onLike, onSkip, onBack }) {
+export default function IdeaCard({
+  idea,
+  message,
+  isShowingBack,
+  onLike,
+  onSkip,
+  onBack,
+}) {
   return (
     <div className="sm:flex border border-gray-300 rounded mh-card">
       <div className="relative sm:w-1/3 border-b border-gray-300">
-        <img
-          className="w-full h-80 sm:h-full"
-          src={idea.imageUrl}
-          alt="Hacker"
-        />
-
-        <button
-          className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute top-2 left-2 sm:left-2"
-          onClick={() => onBack()}
-        >
-          ⏪
-        </button>
+        <img className="w-full h-80 sm:h-full" src={idea.imageUrl} alt="Idea" />
+        {message && (
+          <div className="text-gray-600 absolute top-4 left-0 right-0 w-80 mx-auto opacity-80 p-4 rounded-lg bg-white border-2 border-gray-300">
+            <p className="break-words">💻 {message}</p>
+          </div>
+        )}
+        {isShowingBack && (
+          <button
+            className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute top-2 left-2 sm:left-2"
+            onClick={() => onBack()}
+          >
+            ⏪
+          </button>
+        )}
         <button
           className="bg-purple-500 border-2 border-white px-6 py-4 text-2xl rounded-full absolute bottom-2 left-16 sm:left-2"
           onClick={() => onSkip()}
@@ -36,11 +45,13 @@ export default function IdeaCard({ idea, onLike, onSkip, onBack }) {
             <div className="w-full mb-2 text-gray-500">{idea.description}</div>
 
             <div className="w-1/4">
-              {idea.profile.picture && (
+              {idea.profile && (
                 <img
                   className="w-16 h-16 rounded-full"
                   alt="profile"
-                  src={idea.profile.picture.original.url}
+                  src={
+                    idea.profile.imageUrl || idea.profile.picture?.original?.url
+                  }
                 />
               )}
             </div>

@@ -20,7 +20,7 @@ export default function NewIdeaPage({ signer, profile, onSave }) {
   async function createChatGroup() {
     const group = await createGroup(signer, {
       groupName: ideaForm.name,
-      groupDescription: ideaForm.description,
+      groupDescription: ideaForm.description.substring(0, 150),
       groupImage: ideaForm.imageUrl,
     });
 
