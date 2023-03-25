@@ -44,7 +44,7 @@ export default function IdeaCard({
           <div className="flex flex-wrap items-center">
             <div className="w-full mb-2 text-gray-500">{idea.description}</div>
 
-            <div className="w-1/4">
+            <div className="w-1/6">
               {idea.profile && (
                 <img
                   className="w-16 h-16 rounded-full"
@@ -55,7 +55,7 @@ export default function IdeaCard({
                 />
               )}
             </div>
-            <div className="w-3/4">
+            <div className="w-5/6">
               <p className="text-gray-500 mb-2">by {idea.profile.name}</p>
             </div>
           </div>

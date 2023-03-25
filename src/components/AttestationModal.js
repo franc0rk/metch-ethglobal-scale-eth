@@ -1,7 +1,17 @@
-export default function AttestationModal({
-  onClose,
-  receiver = { name: "s" },
-}) {
+import { useState } from "react";
+import { attest } from "../services/connectWallet";
+
+export default function AttestationModal({ onClose, receiver, signer }) {
+  const [attestation, setAttestation] = useState({
+    about: "",
+    key: "metch.attestations.rocks",
+    value: "",
+  });
+
+  async function sendAttestation(about) {
+    await attest({ ...attestation, about }, signer);
+    onClose();
+  }
   return (
     <div
       className="relative z-10"
@@ -12,7 +22,7 @@ export default function AttestationModal({
       <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
       <div className="fixed inset-0 z-10 overflow-y-auto">
-        <div className="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0">
+        <div className="flex min-h-full items-center justify-center px-8 p-4 text-center sm:items-center sm:p-0">
           <div className="p-4 relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
             <div>
               <div className="sm:flex sm:items-start">
@@ -29,7 +39,16 @@ export default function AttestationModal({
                     </div>
                     <div className="p-2">
                       <div className="mb-2">
-                        <select className="border border-gray-300 rounded-lg p-1 w-full">
+                        <select
+                          className="border border-gray-300 rounded-lg p-1 w-full"
+                          value={attestation.key}
+                          onChange={(e) =>
+                            setAttestation({
+                              ...attestation,
+                              key: e.target.value,
+                            })
+                          }
+                        >
                           <option value="metch.attestations.rocks">
                             🤘 {receiver.name} rocks!
                           </option>
@@ -44,6 +63,13 @@ export default function AttestationModal({
                       <div>
                         <textarea
                           className="w-full border border-gray-300 rounded-lg p-2"
+                          value={attestation.value}
+                          onChange={(e) =>
+                            setAttestation({
+                              ...attestation,
+                              value: e.target.value,
+                            })
+                          }
                           placeholder="Why?"
                         ></textarea>
                       </div>
@@ -63,6 +89,7 @@ export default function AttestationModal({
               <button
                 type="button"
                 className="w-full rounded-lg bg-purple-500 p-2 font-semibold text-white"
+                onClick={() => sendAttestation(receiver.address)}
               >
                 Send
               </button>
