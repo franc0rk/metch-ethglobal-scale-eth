@@ -20,15 +20,15 @@ export default function HackerPoh({ profile }) {
       <h4 className="mb-2 text-purple-500">Proof of Hacking</h4>
       <div className="my-4">
         <p className="my-1">
-          <span>🤘</span> francork.eth rocks{" "}
+          <span>🤘</span> {profile.name} rocks{" "}
           <span className="text-purple-500">x5</span>
         </p>
         <p>
-          <span>🚀</span> francork.eth is going to the moon{" "}
+          <span>🚀</span> {profile.name} will moon{" "}
           <span className="text-purple-500">x2</span>
         </p>
         <p>
-          <span>🤓</span> francork.eth learns fast{" "}
+          <span>🤓</span> {profile.name} learns fast{" "}
           <span className="text-purple-500">x3</span>
         </p>
       </div>
@@ -47,6 +47,21 @@ export default function HackerPoh({ profile }) {
               />
             </div>
           ))}
+        </div>
+      )}
+      {poaps.length === 0 && (
+        <div className="flex flex-wrap">
+          <h5 className="mb-2 text-purple-500 w-full">POAP</h5>
+          <div
+            className="flex justify-center items-center w-12 h-12 mb-2 cursor-pointer mr-2"
+            key={`poap-default`}
+          >
+            <img
+              className="rounded-full"
+              src="https://assets.poap.xyz/1f8b8ba6-fd66-4fe2-8591-4b022612946a.png"
+              alt="metch poap"
+            />
+          </div>
         </div>
       )}
     </div>

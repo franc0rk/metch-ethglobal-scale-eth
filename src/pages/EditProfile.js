@@ -58,7 +58,7 @@ export default function EditProfilePage({ signer, profile, user, onSave }) {
 
     await setProfileMetadata(profile.id, metadataUrl, signer);
     onSave();
-    navigate(0, { replace: true });
+    navigate("/", { replace: true });
   }
 
   const navigate = useNavigate();

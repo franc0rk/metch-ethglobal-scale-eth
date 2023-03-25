@@ -35,7 +35,7 @@ export default function AppWelcome({ signer, address, onCreate }) {
       setTimeout(() => {
         setIsCreating(false);
         onCreate();
-        navigate(0, { replace: true });
+        navigate("/");
       }, 5000);
     }
   }

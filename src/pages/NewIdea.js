@@ -56,7 +56,7 @@ export default function NewIdeaPage({ signer, profile, onSave }) {
 
     await createPublication(signer, profile.id, metadata);
 
-    navigate(0, { replace: true });
+    navigate("/", { replace: true });
     setIsSaving(false);
   }
 

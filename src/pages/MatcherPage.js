@@ -30,6 +30,7 @@ export default function MatcherPage({ profile, signer, address }) {
     const filteredProfiles = _profiles.filter(
       (_profile) =>
         _profile.attributes &&
+        _profile.bio?.length > 30 &&
         _profile.attributes.some((attr) => attr.value === "metch") &&
         _profile.ownedBy !== address
     );
@@ -100,6 +101,7 @@ export default function MatcherPage({ profile, signer, address }) {
       (_idea) =>
         _idea.profile.ownedBy !== address &&
         _idea.metadata &&
+        _idea.metadata.description.length > 30 &&
         _idea.metadata.attributes.some(
           (_attr) => _attr.traitType === "chatGroupId"
         )
