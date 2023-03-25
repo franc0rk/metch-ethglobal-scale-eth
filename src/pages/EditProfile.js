@@ -185,7 +185,9 @@ export default function EditProfilePage({ signer, profile, user, onSave }) {
             />
           </div>
           <div className="mb-2">
-            <label className="text-xs text-gray-500">Bio</label>
+            <label className="text-xs text-gray-500">
+              Bio <span className="text-purple-500">*</span>
+            </label>
             <textarea
               className="w-full border border-gray-300 p-2 rounded-lg"
               placeholder="Bio"

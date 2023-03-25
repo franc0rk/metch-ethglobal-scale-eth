@@ -9,7 +9,7 @@ export default function IdeaCard({
   return (
     <div className="sm:flex border border-gray-300 rounded mh-card">
       <div className="relative sm:w-1/3 border-b border-gray-300">
-        <img className="w-full h-80 sm:h-full" src={idea.imageUrl} alt="Idea" />
+        <img className="w-full h-96 sm:h-full" src={idea.imageUrl} alt="Idea" />
         {message && (
           <div className="text-gray-600 absolute top-4 left-0 right-0 w-80 mx-auto opacity-80 p-4 rounded-lg bg-white border-2 border-gray-300">
             <p className="break-words">💻 {message}</p>

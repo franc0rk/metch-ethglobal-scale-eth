@@ -13,6 +13,7 @@ import ChatsPage from "./pages/ChatsPage";
 import ChatPage from "./pages/ChatPage";
 import { createSocketConnection, EVENTS } from "@pushprotocol/socket";
 import RequestPage from "./pages/RequestPage";
+import NotificationBanner from "./components/NotificationBanner";
 
 function App() {
   const [signer, setSigner] = useState(null);
@@ -20,6 +21,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [socket, setSocket] = useState(null);
+  const [isShowingNotification, setIsShowingNotification] = useState(false);
 
   const navigate = useNavigate();
 
@@ -77,6 +79,10 @@ function App() {
     );
     pushSDKSocket?.on(EVENTS.CHAT_RECEIVED_MESSAGE, (notification) => {
       console.log(notification);
+      setIsShowingNotification(true);
+      setTimeout(() => {
+        setIsShowingNotification(false);
+      }, 3000);
     });
 
     setSocket(pushSDKSocket);
@@ -180,6 +186,15 @@ function App() {
             element={<RequestPage signer={signer} address={address} />}
           />
         </Routes>
+        {isShowingNotification && (
+          <NotificationBanner
+            notification={{
+              title: "New message",
+              description: "Go to messages",
+            }}
+            onClick={() => navigate("/chats")}
+          />
+        )}
       </section>
       {profile && profile.name && <FooterMenu />}
     </div>

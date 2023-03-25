@@ -24,7 +24,7 @@ export default function HackerCard({
     <div className="sm:flex border border-gray-300 rounded mh-card">
       <div className="relative sm:w-1/3">
         <img
-          className="w-full h-80 sm:h-full"
+          className="w-full h-96 sm:h-full"
           src={profile.imageUrl}
           alt="Hacker"
         />
