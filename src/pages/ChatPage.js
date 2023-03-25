@@ -4,6 +4,7 @@ import { keyBy } from "lodash";
 import { getMetchProfiles } from "../services/lensQueries";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { EVENTS } from "@pushprotocol/socket";
+import AttestationModal from "../components/AttestationModal";
 // import moment from "moment";
 
 export default function ChatPage({ signer, address, socket }) {
@@ -12,6 +13,11 @@ export default function ChatPage({ signer, address, socket }) {
   const [newMessage, setNewMessage] = useState("");
   const [keyedProfiles, setKeyedProfiles] = useState([]);
   const [isViewingInfo, setIsViewingInfo] = useState(false);
+  const [isShowingModal, setIsShowingModal] = useState({
+    receiver: {},
+    signer,
+  });
+  const [pohReceiver, setPohReceiver] = useState(null);
 
   const navigate = useNavigate();
   const routerLocation = useLocation();
@@ -235,7 +241,17 @@ export default function ChatPage({ signer, address, socket }) {
 
                             {address !==
                               member.wallet.replace("eip155:", "") && (
-                              <button className="cursor-pointer text-purple-500 underline">
+                              <button
+                                className="cursor-pointer text-purple-500 underline"
+                                onClick={() => {
+                                  setIsShowingModal(true);
+                                  setPohReceiver(
+                                    keyedProfiles[
+                                      member.wallet.replace("eip155:", "")
+                                    ]
+                                  );
+                                }}
+                              >
                                 Send POH
                               </button>
                             )}
@@ -267,6 +283,10 @@ export default function ChatPage({ signer, address, socket }) {
           )}
         </div>
       </div>
+      {JSON.stringify(pohReceiver)}
+      {isShowingModal && pohReceiver && (
+        <AttestationModal signer={signer} receiver={pohReceiver} />
+      )}
     </div>
   );
 }

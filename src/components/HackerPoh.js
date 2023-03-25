@@ -24,7 +24,7 @@ export default function HackerPoh({ profile }) {
           <span className="text-purple-500">x5</span>
         </p>
         <p>
-          <span>🚀</span> {profile.name} will moon{" "}
+          <span>🚀</span> {profile.name} inspires{" "}
           <span className="text-purple-500">x2</span>
         </p>
         <p>
