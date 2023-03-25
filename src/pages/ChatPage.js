@@ -245,6 +245,11 @@ export default function ChatPage({ signer, address, socket }) {
                                 className="cursor-pointer text-purple-500 underline"
                                 onClick={() => {
                                   setIsShowingModal(true);
+                                  console.log(
+                                    keyedProfiles[
+                                      member.wallet.replace("eip155:", "")
+                                    ]
+                                  );
                                   setPohReceiver(
                                     keyedProfiles[
                                       member.wallet.replace("eip155:", "")
@@ -283,9 +288,12 @@ export default function ChatPage({ signer, address, socket }) {
           )}
         </div>
       </div>
-      {JSON.stringify(pohReceiver)}
       {isShowingModal && pohReceiver && (
-        <AttestationModal signer={signer} receiver={pohReceiver} />
+        <AttestationModal
+          signer={signer}
+          receiver={pohReceiver}
+          onClose={() => setIsShowingModal(false)}
+        />
       )}
     </div>
   );
