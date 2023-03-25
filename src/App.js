@@ -14,6 +14,7 @@ import ChatPage from "./pages/ChatPage";
 import { createSocketConnection, EVENTS } from "@pushprotocol/socket";
 import RequestPage from "./pages/RequestPage";
 import NotificationBanner from "./components/NotificationBanner";
+import CalendarPage from "./pages/CalendarPage";
 
 function App() {
   const [signer, setSigner] = useState(null);
@@ -184,6 +185,11 @@ function App() {
           <Route
             path="/request/:id"
             element={<RequestPage signer={signer} address={address} />}
+          />
+
+          <Route
+            path="/calendar"
+            element={<CalendarPage signer={signer} address={address} />}
           />
         </Routes>
         {isShowingNotification && (
