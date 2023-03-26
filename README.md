@@ -1,70 +1,30 @@
-# Getting Started with Create React App
+# Metch
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Metch is a dapp for connecting hackers to form teams and build ideas as well as keep them informed about new hacking events.
 
-## Available Scripts
+## About
 
-In the project directory, you can run:
+In my personal experience hacking I noticed that forming teams on discord could not be the best way to do it, Although it works I think there could be a much cooler approach rather than reading many messages all of them with different structures, for example some hackers say they want to join a team, others say they need people for their teams, others comment ideas to build, among other type of messages. Besides, we don’t know if someone is already taken for a team until we ask them. So metch comes and makes this easier.
 
-### `npm start`
+## Objective
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The objective of metch is to be the tool that all hackers use when they need to look for a team and start building at these kind of events
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
 
-### `npm test`
+    ⁃ Matching system
+    ⁃ Reputation system
+    ⁃ Chat
+    ⁃ Calendar for upcoming events
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    - and more coming...
 
-### `npm run build`
+## Try Metch
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+You can try MVP Metch on [https://metchdapp.netlify.app](https://metchdapp.netlify.app)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Just ensure when you create your handle profile it starts with `metch`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Social Media
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Follow [@metchdapp](https://twitter.com/metchdapp) to keep track of development
