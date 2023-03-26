@@ -8,7 +8,7 @@ In my personal experience hacking I noticed that forming teams on discord could 
 
 ## Objective
 
-The objective of metch is to be the tool that all hackers use when they need to look for a team and start building at these kind of events
+The objective of metch is to be the tool that all hackers use when they need to look for a team and start building at events such as hackathons.
 
 ## Features
 
